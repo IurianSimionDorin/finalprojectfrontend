@@ -6,14 +6,8 @@ import FaceRecognition from './components/faceRecognition/FaceRecognition';
 import SignIn from './components/signIn/SignIn';
 import Register from './components/register/Register';
 import Particles from 'react-particles-js';
-import Clarifai from 'clarifai';
 import './App.css';
 import { Component } from 'react';
-
-
-const app = new Clarifai.App({
-  apiKey: 'b1596bee8f0244f9b5318549a055508b'
-});
 
 
 const particlesOptions = {
@@ -119,15 +113,17 @@ class App extends Component {
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
 
-    app.models
-      .predict(
-        Clarifai.FACE_DETECT_MODEL,
-        this.state.input,
-      )
+    fetch('https://agile-tor-45327.herokuapp.com/imageUrl', {
+      method: 'post',
+      headers: { 'Content-Type': undefined },
+      body: JSON.stringify({
+        input: this.state.input
+      })
+    })
+      .then(response => response.json())
       .then(response => {
-        console.log('hi', response);
         if (response) {
-          fetch('http://localhost:3000/image', {
+          fetch('https://agile-tor-45327.herokuapp.com/image', {
             method: 'put',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
